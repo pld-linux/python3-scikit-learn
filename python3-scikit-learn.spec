@@ -5,7 +5,7 @@
 # - test failures (a few with python2, cannot run with python3)
 #
 # Conditional build:
-%bcond_with	tests	# unit tests
+%bcond_with	tests	# unit tests (some failing as of 0.22.2)
 
 %define	joblib_ver	0.11
 %define	numpy_ver	1.8.2
@@ -55,13 +55,12 @@ oparciu o SciPy i rozprowadzany na 3-punktowej licencji BSD.
 %py3_build
 
 %if %{with tests}
+cp -pr sklearn/datasets/{data,descr,images} build-3/lib.*/sklearn/datasets
+cp -pr sklearn/datasets/tests/data build-3/lib.*/sklearn/datasets/tests
 cd build-3/lib.*
-ln -snf ../../../../sklearn/datasets/data sklearn/datasets/data
-ln -snf ../../../../sklearn/datasets/descr sklearn/datasets/descr
-ln -snf ../../../../sklearn/datasets/images sklearn/datasets/images
-ln -snf ../../../../../sklearn/datasets/tests/data sklearn/datasets/tests/data
-%{__python3} -m pytest
-%{__rm} sklearn/datasets/{data,descr,images} sklearn/datasets/tests/data
+PYTHONPATH=$(pwd) \
+%{__python3} -m pytest sklearn
+%{__rm} -r sklearn/datasets/{data,descr,images} sklearn/datasets/tests/data
 cd ../..
 %endif
 
