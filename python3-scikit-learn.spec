@@ -15,7 +15,7 @@ Summary:	Set of Python 3 modules for machine learning and data mining
 Summary(pl.UTF-8):	Zbiór modułów Pythona 3 do uczenia maszynowego i eksporacji danych
 Name:		python3-scikit-learn
 Version:	0.22.2.post1
-Release:	1
+Release:	2
 License:	BSD
 Group:		Libraries/Python
 #Source0Download: https://pypi.org/simple/scikit-learn/
@@ -79,9 +79,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc COPYING README.rst
 %dir %{py3_sitedir}/sklearn
-%attr(755,root,root%) %{py3_sitedir}/sklearn/_isotonic.cpython-*.so
-%attr(755,root,root%) %{py3_sitedir}/sklearn/*.py
-%attr(755,root,root%) %{py3_sitedir}/sklearn/__pycache__
+%attr(755,root,root) %{py3_sitedir}/sklearn/_isotonic.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/*.py
+%attr(755,root,root) %{py3_sitedir}/sklearn/__pycache__
 %dir %{py3_sitedir}/sklearn/__check_build
 %attr(755,root,root) %{py3_sitedir}/sklearn/__check_build/_check_build.cpython-*.so
 %{py3_sitedir}/sklearn/__check_build/*.py
