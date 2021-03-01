@@ -25,7 +25,7 @@ URL:		https://scikit-learn.org/
 BuildRequires:	libgomp-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.714
-#BuildRequires:	python3-Cython
+BuildRequires:	python3-Cython
 BuildRequires:	python3-devel >= 1:3.5
 BuildRequires:	python3-numpy-devel >= %{numpy_ver}
 BuildRequires:	python3-scipy >= %{scipy_ver}
