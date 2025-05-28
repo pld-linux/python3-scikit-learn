@@ -15,13 +15,14 @@ Summary:	Set of Python 3 modules for machine learning and data mining
 Summary(pl.UTF-8):	Zbiór modułów Pythona 3 do uczenia maszynowego i eksporacji danych
 Name:		python3-scikit-learn
 Version:	1.6.1
-Release:	0.1
+Release:	1
 License:	BSD
 Group:		Libraries/Python
 #Source0Download: https://pypi.org/simple/scikit-learn/
 Source0:	https://files.pythonhosted.org/packages/source/s/scikit-learn/scikit_learn-%{version}.tar.gz
 # Source0-md5:	f7e65a9e011c8ec6d0eb4dbe32edcbdc
 URL:		https://scikit-learn.org/
+BuildRequires:	findutils
 BuildRequires:	libgomp-devel
 BuildRequires:	rpm-pythonprov
 BuildRequires:	rpmbuild(macros) >= 1.714
@@ -71,7 +72,16 @@ rm -rf $RPM_BUILD_ROOT
 %py3_install_pyproject
 
 %{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/sklearn/tests
-%{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/sklearn/{cluster,compose,covariance,cross_decomposition,datasets,decomposition,ensemble,ensemble/_hist_gradient_boosting,experimental,feature_extraction,feature_selection,gaussian_process,impute,inspection,linear_model,manifold,metrics,metrics/{_plot,cluster},mixture,model_selection,neighbors,neural_network,preprocessing,semi_supervised,svm,tree,utils}/tests
+%{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/sklearn/{cluster,compose,covariance,cross_decomposition,datasets,decomposition,ensemble,ensemble/_hist_gradient_boosting,experimental,feature_extraction,feature_selection,frozen,gaussian_process,impute,inspection,linear_model,_loss,manifold,metrics,metrics/{_plot,cluster},mixture,model_selection,neighbors,neural_network,preprocessing,semi_supervised,svm,tree,utils}/tests
+%{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/sklearn/cluster/_hdbscan/tests
+%{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/sklearn/utils/_test_common
+
+%{__rm} -r $RPM_BUILD_ROOT%{py3_sitedir}/sklearn/{svm,utils}/src
+
+find $RPM_BUILD_ROOT%{py3_sitedir}/sklearn/ -type f -name '*.pyx*' -delete
+find $RPM_BUILD_ROOT%{py3_sitedir}/sklearn/ -type f -name '*.pxd*' -delete
+find $RPM_BUILD_ROOT%{py3_sitedir}/sklearn/ -type f -name '*.pxi*' -delete
+find $RPM_BUILD_ROOT%{py3_sitedir}/sklearn/ -type f -name 'meson.build' -delete
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -95,10 +105,15 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{py3_sitedir}/sklearn/cluster
 %attr(755,root,root) %{py3_sitedir}/sklearn/cluster/_dbscan_inner.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/cluster/_hierarchical_fast.cpython-*.so
-%attr(755,root,root) %{py3_sitedir}/sklearn/cluster/_k_means_elkan.cpython-*.so
-#%attr(755,root,root) %{py3_sitedir}/sklearn/cluster/_k_means_fast.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/cluster/_k_means*.cpython-*.so
 %{py3_sitedir}/sklearn/cluster/*.py
 %{py3_sitedir}/sklearn/cluster/__pycache__
+%dir %{py3_sitedir}/sklearn/cluster/_hdbscan
+%attr(755,root,root) %{py3_sitedir}/sklearn/cluster/_hdbscan/_linkage.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/cluster/_hdbscan/_reachability.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/cluster/_hdbscan/_tree.cpython-*.so
+%{py3_sitedir}/sklearn/cluster/_hdbscan/*.py
+%{py3_sitedir}/sklearn/cluster/_hdbscan/__pycache__
 %{py3_sitedir}/sklearn/compose
 %{py3_sitedir}/sklearn/covariance
 %{py3_sitedir}/sklearn/cross_decomposition
@@ -120,28 +135,26 @@ rm -rf $RPM_BUILD_ROOT
 %{py3_sitedir}/sklearn/ensemble/__pycache__
 %dir %{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting
 %attr(755,root,root) %{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting/_binning.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting/_bitset.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting/_gradient_boosting.cpython-*.so
-#%attr(755,root,root) %{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting/_loss.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting/_predictor.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting/common.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting/histogram.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting/splitting.cpython-*.so
-#%attr(755,root,root) %{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting/utils.cpython-*.so
-%{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting/*.pxd
 %{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting/*.py
 %{py3_sitedir}/sklearn/ensemble/_hist_gradient_boosting/__pycache__
 %{py3_sitedir}/sklearn/experimental
 %dir %{py3_sitedir}/sklearn/externals
 %{py3_sitedir}/sklearn/externals/*.py
 %{py3_sitedir}/sklearn/externals/__pycache__
-#%dir %{py3_sitedir}/sklearn/externals/joblib
-#%{py3_sitedir}/sklearn/externals/joblib/*.py
-#%{py3_sitedir}/sklearn/externals/joblib/__pycache__
+%{py3_sitedir}/sklearn/externals/_packaging
+%{py3_sitedir}/sklearn/externals/_scipy
 %dir %{py3_sitedir}/sklearn/feature_extraction
 %attr(755,root,root) %{py3_sitedir}/sklearn/feature_extraction/_hashing_fast.cpython-*.so
 %{py3_sitedir}/sklearn/feature_extraction/*.py
 %{py3_sitedir}/sklearn/feature_extraction/__pycache__
 %{py3_sitedir}/sklearn/feature_selection
+%{py3_sitedir}/sklearn/frozen
 %{py3_sitedir}/sklearn/gaussian_process
 %{py3_sitedir}/sklearn/impute
 %{py3_sitedir}/sklearn/inspection
@@ -149,15 +162,16 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/sklearn/linear_model/_cd_fast.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/linear_model/_sag_fast.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/linear_model/_sgd_fast.cpython-*.so
-#%{py3_sitedir}/sklearn/linear_model/*.pxd
 %{py3_sitedir}/sklearn/linear_model/*.py
 %{py3_sitedir}/sklearn/linear_model/__pycache__
+%{py3_sitedir}/sklearn/linear_model/_glm
 %dir %{py3_sitedir}/sklearn/manifold
 %attr(755,root,root) %{py3_sitedir}/sklearn/manifold/_barnes_hut_tsne.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/manifold/_utils.cpython-*.so
 %{py3_sitedir}/sklearn/manifold/*.py
 %{py3_sitedir}/sklearn/manifold/__pycache__
 %dir %{py3_sitedir}/sklearn/metrics
+%attr(755,root,root) %{py3_sitedir}/sklearn/metrics/_dist_metrics.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/metrics/_pairwise_fast.cpython-*.so
 %{py3_sitedir}/sklearn/metrics/*.py
 %{py3_sitedir}/sklearn/metrics/__pycache__
@@ -166,20 +180,23 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/sklearn/metrics/cluster/_expected_mutual_info_fast.cpython-*.so
 %{py3_sitedir}/sklearn/metrics/cluster/*.py
 %{py3_sitedir}/sklearn/metrics/cluster/__pycache__
+%dir %{py3_sitedir}/sklearn/metrics/_pairwise_distances_reduction
+%{py3_sitedir}/sklearn/metrics/_pairwise_distances_reduction/*.py
+%{py3_sitedir}/sklearn/metrics/_pairwise_distances_reduction/__pycache__
+%attr(755,root,root) %{py3_sitedir}/sklearn/metrics/_pairwise_distances_reduction/*cpython-*.so
 %{py3_sitedir}/sklearn/mixture
 %{py3_sitedir}/sklearn/model_selection
 %dir %{py3_sitedir}/sklearn/neighbors
 %attr(755,root,root) %{py3_sitedir}/sklearn/neighbors/_ball_tree.cpython-*.so
-#%attr(755,root,root) %{py3_sitedir}/sklearn/neighbors/_dist_metrics.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/neighbors/_kd_tree.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/neighbors/_partition_nodes.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/neighbors/_quad_tree.cpython-*.so
-#%attr(755,root,root) %{py3_sitedir}/sklearn/neighbors/_typedefs.cpython-*.so
-%{py3_sitedir}/sklearn/neighbors/*.pxd
 %{py3_sitedir}/sklearn/neighbors/*.py
 %{py3_sitedir}/sklearn/neighbors/__pycache__
 %{py3_sitedir}/sklearn/neural_network
 %dir %{py3_sitedir}/sklearn/preprocessing
 %attr(755,root,root) %{py3_sitedir}/sklearn/preprocessing/_csr_polynomial_expansion.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/preprocessing/_target_encoder_fast.cpython-*.so
 %{py3_sitedir}/sklearn/preprocessing/*.py
 %{py3_sitedir}/sklearn/preprocessing/__pycache__
 %{py3_sitedir}/sklearn/semi_supervised
@@ -187,29 +204,33 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{py3_sitedir}/sklearn/svm/_liblinear.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/svm/_libsvm.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/svm/_libsvm_sparse.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/svm/_newrand.cpython-*.so
 %{py3_sitedir}/sklearn/svm/*.py
 %{py3_sitedir}/sklearn/svm/__pycache__
 %dir %{py3_sitedir}/sklearn/tree
 %attr(755,root,root) %{py3_sitedir}/sklearn/tree/_criterion.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/tree/_partitioner.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/tree/_splitter.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/tree/_tree.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/tree/_utils.cpython-*.so
-%{py3_sitedir}/sklearn/tree/*.pxd
 %{py3_sitedir}/sklearn/tree/*.py
 %{py3_sitedir}/sklearn/tree/__pycache__
 %dir %{py3_sitedir}/sklearn/utils
 %attr(755,root,root) %{py3_sitedir}/sklearn/utils/_cython_blas.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/utils/_fast_dict.cpython-*.so
-#%attr(755,root,root) %{py3_sitedir}/sklearn/utils/_logistic_sigmoid.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/utils/_heap.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/utils/_isfinite.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/utils/_openmp_helpers.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/utils/_random.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/utils/_seq_dataset.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/utils/_sorting.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/utils/_typedefs.cpython-*.so
+%attr(755,root,root) %{py3_sitedir}/sklearn/utils/_vector_sentinel.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/utils/_weight_vector.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/utils/arrayfuncs.cpython-*.so
-#%attr(755,root,root) %{py3_sitedir}/sklearn/utils/graph_shortest_path.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/utils/murmurhash.cpython-*.so
 %attr(755,root,root) %{py3_sitedir}/sklearn/utils/sparsefuncs_fast.cpython-*.so
-%{py3_sitedir}/sklearn/utils/*.pxd
 %{py3_sitedir}/sklearn/utils/*.py
 %{py3_sitedir}/sklearn/utils/__pycache__
+%{py3_sitedir}/sklearn/utils/_estimator_html_repr.css
 %{py3_sitedir}/scikit_learn-%{version}.dist-info
